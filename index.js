@@ -8,11 +8,28 @@ const setup = () => {
   let remainingPairs = maxPairs - currentPairs;
   let timer;
   let seconds = 0;
+  let totalTime;
+  const difficulty = $("input[name='options']:checked").val();
+
+  if (difficulty === "easy") {
+    totalTime = 100;
+    cardAmount = 6;
+  } else if (difficulty === "medium") {
+    totalTime = 200;
+    cardAmount = 12;
+  } else {
+    totalTime = 300;
+    cardAmount = 18;
+  }
 
   function startTimer() {
     timer = setInterval(() => {
       seconds++;
       updateHeader();
+      if (seconds >= totalTime) {
+        clearInterval(timer);
+        loseGame();
+      }
     }, 1000);
   }
 
@@ -33,23 +50,33 @@ const setup = () => {
     }
   }
 
+  function loseGame() {
+    stopTimer();
+    $("#container").text("Time's up!");
+    $("#game_grid").text("Try again!");
+
+    $("#game_grid").on("click", () => {
+      window.location.href = "./index.html";
+    });
+  }
+
   function updateRemainingPairs() {
     remainingPairs = maxPairs - currentPairs;
   }
 
   function updateHeader() {
-    $('#header').text(`
+    $("#header").text(`
     Total Clicks: ${userClicks} \n
     Pairs Left: ${remainingPairs} \n
     Number of Pairs Matched: ${currentPairs} \n
     Total Pairs: ${maxPairs} \n
-    Time: ${seconds} seconds
+    Max Time: ${totalTime} - Current Time: ${seconds} seconds
     `);
   }
 
   updateHeader();
 
-  $(".card").on(("click"), function () {
+  $(".card").on("click", function () {
     if ($(this).hasClass("flip") || hasCompare) {
       console.log("same card pressed");
       return;
@@ -59,8 +86,7 @@ const setup = () => {
     userClicks++;
     updateHeader();
 
-    if (!firstCard)
-      firstCard = $(this).find(".front_face")[0];
+    if (!firstCard) firstCard = $(this).find(".front_face")[0];
     else {
       secondCard = $(this).find(".front_face")[0];
       console.log(firstCard, secondCard);
@@ -92,14 +118,44 @@ const setup = () => {
   startTimer();
   $("#game_grid").show();
 
-}
+  // Fetch random Pokemon data
+  const url = "https://pokeapi.co/api/v2/pokemon?limit=" + cardAmount;
+  fetch(url)
+    .then((response) => response.json())
+    .then((data) => {
+      const pokemonList = data.results;
+
+      // Randomly select unique Pokemon cards
+      const selectedCards = [];
+      while (selectedCards.length < cardAmount) {
+        const randomIndex = Math.floor(Math.random() * pokemonList.length);
+        const selectedPokemon = pokemonList[randomIndex];
+        if (!selectedCards.includes(selectedPokemon)) {
+          selectedCards.push(selectedPokemon);
+          selectedCards.push(selectedPokemon);
+        }
+      }
+
+      // Populate card images
+      $(".front_face").each(function (index) {
+        const card = $(this).parent();
+        const cardImg = $(this);
+        const selectedPokemon = selectedCards[index];
+        const pokemonId = selectedPokemon.url.split("/")[6];
+        const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png`;
+        cardImg.attr("src", imageUrl);
+        cardImg.attr("alt", selectedPokemon.name);
+      });
+    })
+    .catch((error) => console.log(error));
+};
 
 $(document).ready(() => {
-  $("#startButton").show(); 
+  $("#startButton").show();
   $("#game_grid").hide();
-  
+
   $("#startButton").on("click", () => {
     $("#startButton").hide();
     setup();
   });
-})
+});
