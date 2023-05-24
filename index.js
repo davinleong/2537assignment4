@@ -163,10 +163,19 @@ async function setup() {
 $(document).ready(() => {
   $("#startButton").show();
   $("#game_grid").hide();
+  $("#powerUp").hide();
 
   $("#startButton").on("click", () => {
     $("#startButton").hide();
+    $("#powerUp").show();
     setup();
+  });
+
+  $("#powerUp").on("click", () => {
+    $(".card").addClass("flip");
+    setTimeout(() => {
+      $(".card").removeClass("flip");
+    }, 1000); 
   });
 
   $("#darkMode").on("click", () => {
