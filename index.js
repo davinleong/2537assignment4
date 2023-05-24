@@ -30,8 +30,6 @@ async function setup() {
 
   populateGrid(cardAmount, pokemonSprites);
 
-
-
   function startTimer() {
     timer = setInterval(() => {
       seconds++;
@@ -169,5 +167,13 @@ $(document).ready(() => {
   $("#startButton").on("click", () => {
     $("#startButton").hide();
     setup();
+  });
+
+  $("#darkMode").on("click", () => {
+    $("#game_grid").toggleClass("dark-mode");
+  });
+
+  $("#lightMode").on("click", () => {
+    $("#game_grid").toggleClass("light-mode");
   });
 });
