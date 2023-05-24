@@ -4,6 +4,8 @@ const setup = () => {
   let firstCard = null;
   let secondCard = null;
   let hasCompare = false;
+  const maxPairs = $(".card").length / 2;
+  let currentPairs = 0;
 
   function resetCards() {
     firstCard = null;
@@ -11,6 +13,11 @@ const setup = () => {
     console.log("Reset cards");
   }
 
+  function winGame() {
+    if (currentPairs === maxPairs) {
+      alert("Winner!");
+    }
+  }
   $(".card").on(("click"), function () {
 
     if ($(this).hasClass("flip") || hasCompare) {
@@ -34,6 +41,10 @@ const setup = () => {
         $(`#${firstCard.id}`).parent().off("click");
         $(`#${secondCard.id}`).parent().off("click");
         resetCards();
+        currentPairs++;
+        setTimeout(() => {
+          winGame();
+        }, 1000);
       } else {
         console.log("no match")
         hasCompare = true;
