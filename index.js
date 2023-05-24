@@ -1,5 +1,3 @@
-
-
 const setup = () => {
   let firstCard = null;
   let secondCard = null;
@@ -46,13 +44,12 @@ const setup = () => {
     Number of Pairs Matched: ${currentPairs} \n
     Total Pairs: ${maxPairs} \n
     Time: ${seconds} seconds
-    `)
+    `);
   }
 
   updateHeader();
 
   $(".card").on(("click"), function () {
-
     if ($(this).hasClass("flip") || hasCompare) {
       console.log("same card pressed");
       return;
@@ -67,12 +64,8 @@ const setup = () => {
     else {
       secondCard = $(this).find(".front_face")[0];
       console.log(firstCard, secondCard);
-      if (
-        firstCard.src
-        ==
-        secondCard.src
-      ) {
-        console.log("match")
+      if (firstCard.src === secondCard.src) {
+        console.log("match");
         $(`#${firstCard.id}`).parent().off("click");
         $(`#${secondCard.id}`).parent().off("click");
         resetCards();
@@ -83,7 +76,7 @@ const setup = () => {
           winGame();
         }, 1000);
       } else {
-        console.log("no match")
+        console.log("no match");
         hasCompare = true;
         updateHeader();
         setTimeout(() => {
@@ -91,8 +84,7 @@ const setup = () => {
           $(`#${secondCard.id}`).parent().toggleClass("flip");
           resetCards();
           hasCompare = false;
-        }, 1000)
-        
+        }, 1000);
       }
     }
   });
@@ -101,6 +93,4 @@ const setup = () => {
 
 }
 
-
-
-$(document).ready(setup)
+$(document).ready(setup);

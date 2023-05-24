@@ -11,6 +11,12 @@ body {
   flex-wrap: wrap;
 }
 
+#resetButton {
+  display: flex;
+  justify-content: center;
+  margin-top:25px;
+}
+
 #header {
   font-size: x-large;
   text-align: center;
