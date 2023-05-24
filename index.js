@@ -6,6 +6,8 @@ const setup = () => {
   let hasCompare = false;
   const maxPairs = $(".card").length / 2;
   let currentPairs = 0;
+  let userClicks = 0;
+  let remainingPairs = maxPairs - currentPairs;
 
   function resetCards() {
     firstCard = null;
@@ -18,6 +20,22 @@ const setup = () => {
       alert("Winner!");
     }
   }
+
+  function updateRemainingPairs() {
+    remainingPairs = maxPairs - currentPairs;
+  }
+
+  function updateHeader() {
+    $('#header').text(`
+    Total Clicks: ${userClicks} \n
+    Pairs Left: ${remainingPairs} \n
+    Number of Pairs Matched: ${currentPairs} \n
+    Total Pairs: ${maxPairs} \n
+    `)
+  }
+
+  updateHeader();
+
   $(".card").on(("click"), function () {
 
     if ($(this).hasClass("flip") || hasCompare) {
@@ -26,6 +44,8 @@ const setup = () => {
     }
 
     $(this).toggleClass("flip");
+    userClicks++;
+    updateHeader();
 
     if (!firstCard)
       firstCard = $(this).find(".front_face")[0];
@@ -42,12 +62,15 @@ const setup = () => {
         $(`#${secondCard.id}`).parent().off("click");
         resetCards();
         currentPairs++;
+        updateRemainingPairs();
+        updateHeader();
         setTimeout(() => {
           winGame();
         }, 1000);
       } else {
         console.log("no match")
         hasCompare = true;
+        updateHeader();
         setTimeout(() => {
           $(`#${firstCard.id}`).parent().toggleClass("flip");
           $(`#${secondCard.id}`).parent().toggleClass("flip");
