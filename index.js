@@ -8,6 +8,19 @@ const setup = () => {
   let currentPairs = 0;
   let userClicks = 0;
   let remainingPairs = maxPairs - currentPairs;
+  let timer;
+  let seconds = 0;
+
+  function startTimer() {
+    timer = setInterval(() => {
+      seconds++;
+      updateHeader();
+    }, 1000);
+  }
+
+  function stopTimer() {
+    clearInterval(timer);
+  }
 
   function resetCards() {
     firstCard = null;
@@ -18,6 +31,7 @@ const setup = () => {
   function winGame() {
     if (currentPairs === maxPairs) {
       alert("Winner!");
+      stopTimer();
     }
   }
 
@@ -31,6 +45,7 @@ const setup = () => {
     Pairs Left: ${remainingPairs} \n
     Number of Pairs Matched: ${currentPairs} \n
     Total Pairs: ${maxPairs} \n
+    Time: ${seconds} seconds
     `)
   }
 
@@ -81,6 +96,9 @@ const setup = () => {
       }
     }
   });
+
+  startTimer();
+
 }
 
 
