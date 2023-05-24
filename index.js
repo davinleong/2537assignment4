@@ -90,7 +90,16 @@ const setup = () => {
   });
 
   startTimer();
+  $("#game_grid").show();
 
 }
 
-$(document).ready(setup);
+$(document).ready(() => {
+  $("#startButton").show(); 
+  $("#game_grid").hide();
+  
+  $("#startButton").on("click", () => {
+    $("#startButton").hide();
+    setup();
+  });
+})

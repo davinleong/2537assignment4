@@ -11,10 +11,10 @@ body {
   flex-wrap: wrap;
 }
 
-#resetButton {
-  display: flex;
+#container {
   justify-content: center;
   margin-top:25px;
+  text-align: center;
 }
 
 #header {
