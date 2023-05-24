@@ -1,15 +1,15 @@
-const setup = () => {
+async function setup() {
   let firstCard = null;
   let secondCard = null;
   let hasCompare = false;
-  const maxPairs = $(".card").length / 2;
   let currentPairs = 0;
   let userClicks = 0;
-  let remainingPairs = maxPairs - currentPairs;
+  let remainingPairs;
   let timer;
   let seconds = 0;
   let totalTime;
   const difficulty = $("input[name='options']:checked").val();
+  let cardAmount;
 
   if (difficulty === "easy") {
     totalTime = 100;
@@ -19,8 +19,18 @@ const setup = () => {
     cardAmount = 12;
   } else {
     totalTime = 300;
-    cardAmount = 18;
+    cardAmount = 24;
   }
+
+  const maxPairs = cardAmount / 2;
+  remainingPairs = maxPairs - currentPairs;
+
+  const pokemons = await getRandomPokemons(cardAmount / 2);
+  const pokemonSprites = pokemons.flatMap(pokemon => [pokemon.sprites.front_default, pokemon.sprites.front_default]);
+
+  populateGrid(cardAmount, pokemonSprites);
+
+
 
   function startTimer() {
     timer = setInterval(() => {
@@ -118,37 +128,39 @@ const setup = () => {
   startTimer();
   $("#game_grid").show();
 
-  // Fetch random Pokemon data
-  const url = "https://pokeapi.co/api/v2/pokemon?limit=" + cardAmount;
-  fetch(url)
-    .then((response) => response.json())
-    .then((data) => {
-      const pokemonList = data.results;
+  async function getRandomPokemons(count) {
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${count}`);
+    const data = await response.json();
+    const pokemonList = data.results;
 
-      // Randomly select unique Pokemon cards
-      const selectedCards = [];
-      while (selectedCards.length < cardAmount) {
-        const randomIndex = Math.floor(Math.random() * pokemonList.length);
-        const selectedPokemon = pokemonList[randomIndex];
-        if (!selectedCards.includes(selectedPokemon)) {
-          selectedCards.push(selectedPokemon);
-          selectedCards.push(selectedPokemon);
-        }
-      }
+    const promise = pokemonList.map(async pokemon => {
+      const response = await fetch(pokemon.url);
+      return await response.json();
+    });
 
-      // Populate card images
-      $(".front_face").each(function (index) {
-        const card = $(this).parent();
-        const cardImg = $(this);
-        const selectedPokemon = selectedCards[index];
-        const pokemonId = selectedPokemon.url.split("/")[6];
-        const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png`;
-        cardImg.attr("src", imageUrl);
-        cardImg.attr("alt", selectedPokemon.name);
-      });
-    })
-    .catch((error) => console.log(error));
-};
+    return Promise.all(promise);
+  }
+
+  function populateGrid(cardAmount, pokemonImages) {
+    const gameGrid = $("#game_grid");
+    gameGrid.empty(); // Clear the game grid
+
+    for (let i = 1; i <= cardAmount; i++) {
+      const card = $("<div>")
+        .addClass("card")
+        .append($("<img>").addClass("back_face").attr("src", "back.webp"))
+        .append($("<img>").addClass("front_face").attr("id", "img" + i).attr("src", getRandomImage(pokemonImages)));
+      gameGrid.append(card);
+    }
+  }
+
+  function getRandomImage(pokemonImages) {
+    const randomIndex = Math.floor(Math.random() * pokemonImages.length);
+    const image = pokemonImages[randomIndex];
+    pokemonImages.splice(randomIndex, 1); // Remove the selected image from the array
+    return image;
+  }
+}
 
 $(document).ready(() => {
   $("#startButton").show();

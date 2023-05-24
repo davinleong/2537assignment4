@@ -4,11 +4,12 @@ body {
 
 #game_grid {
   border: 2px tomato solid;
-  width: 600px;
-  height: 400px;
+  width: 800px;
+  height: 800px;
   margin: auto;
   display: flex;
   flex-wrap: wrap;
+  
 }
 
 #container {
@@ -24,17 +25,21 @@ body {
   line-height: 1;
   white-space: pre-wrap;
 }
+
 .card {
-  width: 33.3%;
+  width: 25%;
+  height: 150px;
   position: relative;
   transition: transform 1s;
   perspective: 1000px;
   transform-style: preserve-3d;
+  border-radius: 4px;
+  background-color: rgb(255, 255, 255);
 }
 
 
 img {
-  width: 100%
+  width: 100%;
 }
 
 .front_face,
